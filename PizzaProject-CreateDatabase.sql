@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS pizzaCrust;
 CREATE TABLE pizzaCrust (
   pizzaCrust_id int NOT NULL AUTO_INCREMENT,
   name varchar(16) NOT NULL,
-  price float NOT NULL DEFAULT '0',
+  price decimal(8,2) NOT NULL DEFAULT '0',
   PRIMARY KEY (pizzaCrust_id)
 );
 
@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS pizzaSize;
 CREATE TABLE pizzaSize (
   pizzaSize_id int NOT NULL AUTO_INCREMENT,
   name varchar(16) NOT NULL,
-  price float NOT NULL DEFAULT '0',
+  price decimal(8,2) NOT NULL DEFAULT '0',
   PRIMARY KEY (pizzaSize_id)
 );
 
@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS pizzaTopping;
 CREATE TABLE pizzaTopping (
   pizzaTopping_id int NOT NULL AUTO_INCREMENT,
   name varchar(32) NOT NULL,
-  price float NOT NULL DEFAULT '0',
+  price decimal(8,2) NOT NULL DEFAULT '0',
   createdate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   empAddedBy int NOT NULL,
   isActive tinyint NOT NULL DEFAULT '1',
@@ -58,19 +58,25 @@ CREATE TABLE pizzaTopping (
 );
 
 INSERT INTO pizzaTopping VALUES 
-	(5,'cheese',0.00,'2017-11-04 23:35:40',1,1),
-	(6,'extra cheese',1.99,'2017-11-04 23:35:40',1,1),
-	(7,'pepperoni',1.99,'2017-11-04 23:35:40',1,1),
-	(8,'green peppers',1.99,'2017-11-04 23:35:40',1,1);
+	(1,'Cheese',        0.00,'2024-12-04',1,1),
+	(2,'Extra Cheese',  1.99,'2024-12-04',1,1),
+	(3,'Mushrooms',     0.99,'2024-12-04',1,1),
+	(4,'Onions',        0.99,'2024-12-04',1,1),
+	(5,'Ham',           1.99,'2024-12-04',1,1),
+	(6,'Pineapple',     0.99,'2024-12-04',1,1),
+	(7,'Italian sausage',1.99,'2024-12-04',1,1),
+	(8,'Pepperoni',      1.99,'2024-12-04',1,1),
+	(9,'Green Peppers',  0.99,'2024-12-04',1,1);
 
 
 DROP TABLE IF EXISTS customer;
 CREATE TABLE customer (
   customer_id int NOT NULL AUTO_INCREMENT,
+  email varchar(45) NOT NULL,
+  password varchar(255) NOT NULL,
   firstName varchar(45) NOT NULL,
   lastName varchar(45) NOT NULL,
   phoneNumber varchar(45) NOT NULL,
-  email varchar(45) NOT NULL,
   houseNumber int DEFAULT NULL,
   street varchar(45) DEFAULT NULL,
   province varchar(2) DEFAULT NULL,
@@ -79,16 +85,18 @@ CREATE TABLE customer (
 );
 
 INSERT INTO Customer VALUES 
-	(1,'Dave','Thomas','123','dave@thomas.com',123,'main','NB','A1A1A1');
+	(1,'dave@thomas.com','ThisPasswordShouldNotWork-Why?','Dave','Thomas','123',123,'main','NB','A1A1A1');
 
 DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
   order_id int NOT NULL AUTO_INCREMENT,
   customer_id int NOT NULL,
-  subTotal float NOT NULL DEFAULT '0',
-  hst float NOT NULL DEFAULT '0',
-  orderTotal float NOT NULL DEFAULT '0',
+  subTotal decimal(8,2) NOT NULL DEFAULT '0',
+  hst decimal(8,2) NOT NULL DEFAULT '0',
+  orderTotal decimal(8,2) NOT NULL DEFAULT '0',
+  amountPaid decimal(8,2) NOT NULL DEFAULT '0',
   orderStatus varchar(12) NOT NULL DEFAULT 'PENDING',
+  delivery tinyint NOT NULL DEFAULT '0', 					-- 0=Pickup, 1=Delivery
   deliveryDate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   orderPlacedDate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (order_id),
@@ -105,8 +113,8 @@ CREATE TABLE pizza (
   pizzaSize_id int NOT NULL,
   pizzaCrust_id int NOT NULL,
   quantity int NOT NULL default '1',
-  priceEach float NOT NULL,
-  totalPrice float NOT NULL,
+  priceEach decimal(8,2) NOT NULL,
+  totalPrice decimal(8,2) NOT NULL,
   PRIMARY KEY (pizza_id),
   KEY FK_order (order_id),
   FOREIGN KEY (pizzaCrust_id) REFERENCES pizzaCrust (pizzaCrust_id),
@@ -145,7 +153,7 @@ DELIMITER ;
 
 DELETE FROM Pizza WHERE pizza_id in (1,2);
 INSERT INTO Pizza (pizza_id, order_id, pizzaSize_id, pizzaCrust_id,priceEach,totalPrice) VALUES (1,1,1,1,9.99,9.99);
---INSERT INTO Pizza (pizza_id, order_id, pizzaSize_id, pizzaCrust_id,priceEach,totalPrice) VALUES (2,1,4,1,9.99,9.99);
+-- INSERT INTO Pizza (pizza_id, order_id, pizzaSize_id, pizzaCrust_id,priceEach,totalPrice) VALUES (2,1,4,1,9.99,9.99);
 
 -- DROP USER IF EXISTS JavaApp;
 CREATE USER IF NOT EXISTS JavaApp IDENTIFIED BY 'JavaApp';
